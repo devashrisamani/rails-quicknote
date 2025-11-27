@@ -1,27 +1,73 @@
+<%# =========================================================================== %>
+<%# LAYOUT - app/views/layouts/application.html.erb                           %>
+<%# =========================================================================== %>
+<%# This is the "wrapper" that surrounds every page in your app               %>
+<%# The actual page content goes where "yield" is called                      %>
+<%#                                                                           %>
+<%# Structure:                                                                %>
+<%#   <html>                                                                  %>
+<%#     <head>...</head>                                                      %>
+<%#     <body>                                                                %>
+<%#       [YOUR PAGE CONTENT HERE via yield]                                  %>
+<%#     </body>                                                               %>
+<%#   </html>                                                                 %>
+<%# =========================================================================== %>
+
 <!DOCTYPE html>
 <html class="h-full">
   <head>
+    <%# PAGE TITLE - Shows in browser tab %>
+    <%# content_for(:title) gets the title set by individual pages %>
+    <%# If no title is set, use "QuickNote" as default %>
     <title><%= content_for(:title) || "QuickNote" %></title>
+
+    <%# META TAGS - Settings for browsers and devices %>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="application-name" content="QuickNote">
     <meta name="mobile-web-app-capable" content="yes">
+
+    <%# SECURITY TAGS - Protection against attacks %>
+    <%# csrf_meta_tags: Prevents Cross-Site Request Forgery attacks %>
+    <%# csp_meta_tag: Content Security Policy settings %>
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
+    <%# YIELD :HEAD - Insert content from individual pages %>
+    <%# Pages can add extra head content with: content_for :head do ... end %>
     <%= yield :head %>
 
+    <%# FAVICON - The little icon in browser tabs %>
     <link rel="icon" href="/icon.png" type="image/png">
     <link rel="icon" href="/icon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/icon.png">
 
+    <%# STYLESHEETS - CSS files for styling %>
+    <%# "tailwind" loads app/assets/builds/tailwind.css %>
+    <%# :app loads app/assets/stylesheets/application.css %>
+    <%# data-turbo-track: "reload" tells Turbo to reload if CSS changes %>
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+
+    <%# JAVASCRIPT - Loads JavaScript via import maps %>
+    <%# This includes Turbo, Stimulus, and your custom JS %>
     <%= javascript_importmap_tags %>
   </head>
 
+  <%# BODY - The visible part of the page %>
+  <%# Tailwind classes explained: %>
+  <%#   h-full           - Height: 100% of parent %>
+  <%#   bg-gradient-to-br - Background gradient going bottom-right %>
+  <%#   from-slate-50    - Gradient starts with light gray %>
+  <%#   via-white        - Gradient passes through white %>
+  <%#   to-amber-50      - Gradient ends with light amber %>
+  <%#   text-slate-800   - Default text color: dark gray %>
+  <%#   antialiased      - Smooth text rendering %>
   <body class="h-full bg-gradient-to-br from-slate-50 via-white to-amber-50 text-slate-800 antialiased">
     <main class="min-h-full">
+      <%# YIELD - This is where page content goes! %>
+      <%# When you visit /notes, Rails renders notes/index.html.erb %>
+      <%# That content replaces this yield %>
       <%= yield %>
     </main>
   </body>

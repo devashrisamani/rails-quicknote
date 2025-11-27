@@ -1,7 +1,26 @@
+<%# =========================================================================== %>
+<%# NEW VIEW - app/views/notes/new.html.erb %>
+<%# =========================================================================== %>
+<%# Shows the form for creating a new note %>
+<%# URL: /notes/new %>
+<%# Controller action: NotesController#new %>
+<%# %>
+<%# Available variables from controller: %>
+<%#   @note - An empty Note object (Note.new) for the form to use %>
+<%# %>
+<%# When form is submitted: %>
+<%#   1. Browser sends POST request to /notes %>
+<%#   2. NotesController#create handles it %>
+<%#   3. If valid: redirects to show page %>
+<%#   4. If invalid: re-renders this page with errors %>
+<%# =========================================================================== %>
+
+<%# SET PAGE TITLE %>
 <% content_for :title, "New Note" %>
 
 <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
-  <!-- Back Link -->
+
+  <%# BACK NAVIGATION %>
   <nav class="mb-8">
     <%= link_to notes_path, class: "inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 font-medium transition-colors" do %>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -12,6 +31,9 @@
     <% end %>
   </nav>
 
+  <%# FORM CARD %>
+  <%# Note: No turbo-frame here because new notes don't have an ID yet %>
+  <%# (The note doesn't exist in database until form is submitted) %>
   <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
     <header class="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-slate-100">
       <h1 class="text-2xl sm:text-3xl font-bold text-slate-800">New Note</h1>
@@ -19,6 +41,11 @@
     </header>
 
     <div class="px-6 sm:px-8 py-6">
+      <%# RENDER THE FORM PARTIAL %>
+      <%# render "form" looks for _form.html.erb in the same folder %>
+      <%# note: @note passes our empty Note object to the form %>
+      <%# %>
+      <%# The form will submit to POST /notes because @note.new_record? is true %>
       <%= render "form", note: @note %>
     </div>
   </div>

@@ -1,6 +1,21 @@
+<%# =========================================================================== %>
+<%# SHOW VIEW - app/views/notes/show.html.erb %>
+<%# =========================================================================== %>
+<%# Displays a single note in full detail %>
+<%# URL: /notes/:id (e.g., /notes/1) %>
+<%# Controller action: NotesController#show %>
+<%# %>
+<%# Available variables from controller: %>
+<%#   @note - The Note object to display %>
+<%#   notice - Flash message (e.g., "Note was successfully created.") %>
+<%# =========================================================================== %>
+
+<%# SET PAGE TITLE to the note's title %>
 <% content_for :title, @note.title %>
 
 <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+
+  <%# FLASH MESSAGE - Shows success messages %>
   <% if notice.present? %>
     <div class="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center gap-3">
       <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="flex-shrink-0">
@@ -10,9 +25,12 @@
     </div>
   <% end %>
 
-  <!-- Back Link -->
+  <%# BACK NAVIGATION %>
+  <%# link_to notes_path creates <a href="/notes">...</a> %>
+  <%# Using do...end block lets us put complex content (icon + text) inside %>
   <nav class="mb-8">
     <%= link_to notes_path, class: "inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 font-medium transition-colors" do %>
+      <%# Left arrow icon %>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"/>
         <polyline points="12 19 5 12 12 5"/>
@@ -21,15 +39,25 @@
     <% end %>
   </nav>
 
+  <%# TURBO FRAME - Enables inline editing %>
+  <%# When you click Edit: %>
+  <%#   1. Turbo fetches /notes/1/edit %>
+  <%#   2. Finds matching turbo-frame in response (edit.html.erb has one) %>
+  <%#   3. Replaces this frame's content with the edit form %>
+  <%#   4. After saving, this frame is replaced back with updated note %>
   <turbo-frame id="<%= dom_id(@note) %>">
     <article class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-      <!-- Header -->
+
+      <%# HEADER - Title and timestamps %>
       <header class="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-slate-100">
         <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2"><%= @note.title %></h1>
+
+        <%# TIMESTAMPS %>
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
           <time datetime="<%= @note.created_at.iso8601 %>">
             Created <%= time_ago_in_words(@note.created_at) %> ago
           </time>
+          <%# Only show "Updated" if note was actually updated %>
           <% if @note.updated_at != @note.created_at %>
             <span>•</span>
             <time datetime="<%= @note.updated_at.iso8601 %>">
@@ -39,15 +67,20 @@
         </div>
       </header>
 
-      <!-- Body -->
+      <%# BODY - The note content %>
       <div class="px-6 sm:px-8 py-6">
         <div class="prose prose-slate max-w-none">
+          <%# whitespace-pre-wrap preserves line breaks from the text %>
           <p class="text-slate-600 whitespace-pre-wrap leading-relaxed"><%= @note.body %></p>
         </div>
       </div>
 
-      <!-- Actions -->
+      <%# ACTIONS FOOTER - Edit and Delete buttons %>
       <footer class="px-6 sm:px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex flex-wrap items-center gap-3">
+
+        <%# EDIT BUTTON %>
+        <%# data: { turbo_frame: dom_id(@note) } enables INLINE EDITING %>
+        <%# The edit form will replace the content inside this turbo-frame %>
         <%= link_to edit_note_path(@note),
             class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors",
             data: { turbo_frame: dom_id(@note) } do %>
@@ -58,10 +91,21 @@
           Edit note
         <% end %>
 
+        <%# DELETE BUTTON %>
+        <%# IMPORTANT: This button is different from the one on index page! %>
+        <%# %>
+        <%# form: { data: { turbo: false } } - Disables Turbo for this form %>
+        <%# Why? Because we're ON the show page for this note. %>
+        <%# If we use Turbo Stream to remove the note, we'd be stuck on an empty page! %>
+        <%# Instead, we want a full redirect to /notes after deleting. %>
+        <%# %>
+        <%# onclick: "return confirm(...)" - Shows browser confirmation dialog %>
+        <%# (We can't use turbo_confirm since Turbo is disabled) %>
         <%= button_to note_path(@note),
             method: :delete,
-            class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:border-rose-200 transition-colors",
-            form: { data: { turbo_confirm: "Delete this note?" } } do %>
+            class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:border-rose-200 transition-colors cursor-pointer",
+            form: { data: { turbo: false } },
+            onclick: "return confirm('Delete this note?')" do %>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"/>
             <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
