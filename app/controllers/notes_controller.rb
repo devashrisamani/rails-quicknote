@@ -3,7 +3,7 @@ class NotesController < ApplicationController
 
   # GET /notes or /notes.json
   def index
-    @notes = Note.all
+    @notes = Note.order(created_at: :desc)
   end
 
   # GET /notes/1 or /notes/1.json
@@ -52,19 +52,21 @@ class NotesController < ApplicationController
     @note.destroy!
 
     respond_to do |format|
-      format.html { redirect_to notes_path, notice: "Note was successfully destroyed.", status: :see_other }
+      format.turbo_stream { render turbo_stream: turbo_stream.remove(@note) }
+      format.html { redirect_to notes_path, notice: "Note was successfully deleted.", status: :see_other }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_note
-      @note = Note.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def note_params
-      params.expect(note: [ :title, :body ])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_note
+    @note = Note.find(params.expect(:id))
+  end
+
+  # Only allow a list of trusted parameters through.
+  def note_params
+    params.expect(note: [ :title, :body ])
+  end
 end

@@ -1,10 +1,74 @@
-<p style="color: green"><%= notice %></p>
+<% content_for :title, @note.title %>
 
-<%= render @note %>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <% if notice.present? %>
+    <div class="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center gap-3">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="flex-shrink-0">
+        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+      </svg>
+      <span class="font-medium"><%= notice %></span>
+    </div>
+  <% end %>
 
-<div>
-  <%= link_to "Edit this note", edit_note_path(@note) %> |
-  <%= link_to "Back to notes", notes_path %>
+  <!-- Back Link -->
+  <nav class="mb-8">
+    <%= link_to notes_path, class: "inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 font-medium transition-colors" do %>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Back to notes
+    <% end %>
+  </nav>
 
-  <%= button_to "Destroy this note", @note, method: :delete %>
+  <turbo-frame id="<%= dom_id(@note) %>">
+    <article class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <!-- Header -->
+      <header class="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-slate-100">
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800 mb-2"><%= @note.title %></h1>
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
+          <time datetime="<%= @note.created_at.iso8601 %>">
+            Created <%= time_ago_in_words(@note.created_at) %> ago
+          </time>
+          <% if @note.updated_at != @note.created_at %>
+            <span>•</span>
+            <time datetime="<%= @note.updated_at.iso8601 %>">
+              Updated <%= time_ago_in_words(@note.updated_at) %> ago
+            </time>
+          <% end %>
+        </div>
+      </header>
+
+      <!-- Body -->
+      <div class="px-6 sm:px-8 py-6">
+        <div class="prose prose-slate max-w-none">
+          <p class="text-slate-600 whitespace-pre-wrap leading-relaxed"><%= @note.body %></p>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <footer class="px-6 sm:px-8 py-4 bg-slate-50/50 border-t border-slate-100 flex flex-wrap items-center gap-3">
+        <%= link_to edit_note_path(@note),
+            class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 hover:border-slate-300 transition-colors",
+            data: { turbo_frame: dom_id(@note) } do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Edit note
+        <% end %>
+
+        <%= button_to note_path(@note),
+            method: :delete,
+            class: "inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-rose-600 bg-rose-50 border border-rose-100 rounded-lg hover:bg-rose-100 hover:border-rose-200 transition-colors",
+            form: { data: { turbo_confirm: "Delete this note?" } } do %>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+          </svg>
+          Delete
+        <% end %>
+      </footer>
+    </article>
+  </turbo-frame>
 </div>

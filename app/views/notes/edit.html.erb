@@ -1,10 +1,35 @@
-<% content_for :title, "Editing note" %>
+<% content_for :title, "Edit: #{@note.title}" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">Editing note</h1>
+<div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+  <!-- Back Link -->
+  <nav class="mb-8">
+    <%= link_to notes_path, class: "inline-flex items-center gap-2 text-slate-500 hover:text-amber-600 font-medium transition-colors" do %>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"/>
+        <polyline points="12 19 5 12 12 5"/>
+      </svg>
+      Back to notes
+    <% end %>
+  </nav>
 
-  <%= render "form", note: @note %>
+  <turbo-frame id="<%= dom_id(@note) %>">
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+      <header class="px-6 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-slate-100">
+        <h1 class="text-2xl sm:text-3xl font-bold text-slate-800">Edit Note</h1>
+        <p class="text-slate-500 mt-1">Make changes to your note</p>
+      </header>
 
-  <%= link_to "Show this note", @note, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
-  <%= link_to "Back to notes", notes_path, class: "w-full sm:w-auto text-center mt-2 sm:mt-0 sm:ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+      <div class="px-6 sm:px-8 py-6">
+        <%= render "form", note: @note %>
+
+        <div class="mt-4 pt-4 border-t border-slate-100">
+          <%= link_to @note,
+              class: "text-sm text-slate-500 hover:text-slate-700 transition-colors",
+              data: { turbo_frame: dom_id(@note) } do %>
+            Cancel editing
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </turbo-frame>
 </div>
