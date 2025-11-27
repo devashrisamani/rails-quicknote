@@ -1,92 +1,43 @@
-<%# =========================================================================== %>
-<%# FORM PARTIAL - app/views/notes/_form.html.erb %>
-<%# =========================================================================== %>
-<%# This form is used by BOTH new.html.erb and edit.html.erb %>
-<%# Using a partial avoids duplicating the form code %>
-<%# %>
-<%# Available variables: %>
-<%#   note - A Note object (either new or existing) %>
-<%# %>
-<%# How Rails knows where to submit: %>
-<%#   - If note.new_record? (not saved yet) → POST to /notes (create) %>
-<%#   - If note.persisted? (already saved) → PATCH to /notes/:id (update) %>
-<%# =========================================================================== %>
+<%# Form partial - used by both new and edit pages %>
 
-<%# FORM_WITH - Rails form helper %>
-<%# %>
-<%# model: note - Connects form to the Note object %>
-<%#   - Automatically sets form action URL %>
-<%#   - Pre-fills fields with note's current values %>
-<%#   - Names fields correctly (note[title], note[body]) %>
-<%# %>
-<%# class: "space-y-6" - Adds 24px gap between form sections %>
-<%# %>
-<%# |form| (or |f|) is the form builder object %>
-<%# We use it to create inputs: form.text_field, form.text_area, etc. %>
 <%= form_with(model: note, class: "space-y-6") do |form| %>
-
-  <%# ERROR MESSAGES - Shown when validation fails %>
-  <%# note.errors.any? returns true if there are any errors %>
+  <%# Validation errors %>
   <% if note.errors.any? %>
     <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
-      <%# Error header with icon %>
       <div class="flex items-center gap-2 text-rose-700 font-medium mb-2">
-        <%# X icon %>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
         </svg>
-        <%# pluralize(2, "error") → "2 errors" %>
         <%= pluralize(note.errors.count, "error") %> prevented saving:
       </div>
-      <%# List each error message %>
       <ul class="list-disc list-inside text-sm text-rose-600 space-y-1 ml-7">
         <% note.errors.each do |error| %>
-          <%# error.full_message → "Title can't be blank" %>
           <li><%= error.full_message %></li>
         <% end %>
       </ul>
     </div>
   <% end %>
 
-  <%# TITLE FIELD %>
+  <%# Title field %>
   <div>
-    <%# LABEL - Clickable label for the input %>
-    <%# form.label :title creates <label for="note_title">Title</label> %>
     <%= form.label :title, class: "block text-sm font-semibold text-slate-700 mb-2" %>
-
-    <%# TEXT INPUT %>
-    <%# form.text_field :title creates <input type="text" name="note[title]" ...> %>
-    <%# %>
-    <%# The class uses string interpolation #{...} to conditionally add %>
-    <%# error styling when there are validation errors on this field %>
-    <%# %>
-    <%# autofocus: note.new_record? - Only autofocus on NEW note form %>
-    <%# (When editing, don't jump to title field) %>
     <%= form.text_field :title,
         class: "block w-full px-4 py-3 text-slate-800 bg-slate-50 border rounded-xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all #{note.errors[:title].any? ? 'border-rose-300 focus:ring-rose-500/50 focus:border-rose-500' : 'border-slate-200'}",
         placeholder: "Enter a title for your note",
         autofocus: note.new_record? %>
   </div>
 
-  <%# BODY FIELD %>
+  <%# Body field %>
   <div>
     <%= form.label :body, class: "block text-sm font-semibold text-slate-700 mb-2" %>
-
-    <%# TEXTAREA %>
-    <%# form.text_area :body creates <textarea name="note[body]">...</textarea> %>
-    <%# rows: 8 - Makes textarea 8 lines tall %>
     <%= form.text_area :body,
         rows: 8,
         class: "block w-full px-4 py-3 text-slate-800 bg-slate-50 border rounded-xl placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-amber-500/50 focus:border-amber-500 focus:bg-white transition-all resize-none #{note.errors[:body].any? ? 'border-rose-300 focus:ring-rose-500/50 focus:border-rose-500' : 'border-slate-200'}",
         placeholder: "Write your note content here..." %>
   </div>
 
-  <%# SUBMIT BUTTON %>
+  <%# Submit button %>
   <div class="pt-2">
-    <%# form.submit creates <input type="submit" value="..."> %>
-    <%# %>
-    <%# note.persisted? is true if note is already saved in database %>
-    <%# So: existing note → "Save Changes", new note → "Create Note" %>
     <%= form.submit note.persisted? ? "Save Changes" : "Create Note",
         class: "w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold rounded-xl shadow-lg shadow-orange-500/25 transition-all duration-200 cursor-pointer focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500" %>
   </div>
